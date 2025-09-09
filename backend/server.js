@@ -3,10 +3,11 @@ const bodyParser = require("body-parser");
 const { OAuth2Client } = require("google-auth-library");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
-
+const cors = require("cors");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
