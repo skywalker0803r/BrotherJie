@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<title>Google 登入測試</title>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+  <meta charset="UTF-8">
+  <title>Google 登入測試頁面</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-<h1>Google 登入測試頁面</h1>
-<p>這是一個測試前端頁面，登入後會寄信並發 TG 通知。</p>
+  <h1>測試 Google 登入 + 訪客資訊收集</h1>
 
+  <div id="g_id_onload"
+       data-client_id="752507712919-bqsrtvglr7vcn1uni09jqlre58vkcsei.apps.googleusercontent.com"
+       data-context="signin"
+       data-ux_mode="popup"
+       data-callback="handleCredentialResponse">
+  </div>
+  <div class="g_id_signin" data-type="standard"></div>
 
-<div id="g_id_onload"
-data-client_id="752507712919-bqsrtvglr7vcn1uni09jqlre58vkcsei.apps.googleusercontent.com"
-data-context="signin"
-data-ux_mode="popup"
-data-callback="handleCredentialResponse">
-</div>
-<div class="g_id_signin" data-type="standard"></div>
+  <script>
+    function handleCredentialResponse(response) {
+      // 收集瀏覽器與作業系統資訊
+      const browser = navigator.userAgent;
+      const os = navigator.platform;
 
-
-<script>
-function handleCredentialResponse(response) {
-fetch("https://brotherjie-backend.onrender.com/google-login", {
-method: "POST",
-headers: {"Content-Type": "application/json"},
-body: JSON.stringify({ credential: response.credential })
-})
-.then(res => res.json())
-.then(data => {
-alert("登入成功！已寄信到：" + data.email);
-});
-}
-</script>
+      fetch("https://brotherjie-backend.onrender.com/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          credential: response.credential,
+          browser,
+          os
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("登入成功！已寄信並通知到 Telegram。");
+      });
+    }
+  </script>
 </body>
 </html>
