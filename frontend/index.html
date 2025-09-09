@@ -4,19 +4,45 @@
   <meta charset="UTF-8">
   <title>Google 登入測試頁面</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    #before-login, #after-login {
+      display: none;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #before-login img, #after-login img {
+      max-width: 300px;
+    }
+  </style>
 </head>
 <body>
-  <h1>測試 Google 登入 + 訪客資訊收集</h1>
 
+  <h1 style="text-align:center;">測試 Google 登入 + 訪客資訊收集</h1>
+
+  <!-- 登入前顯示 -->
+  <div id="before-login">
+    <img src="img1.png" alt="登入前圖片">
+    <div class="g_id_signin" data-type="standard" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- 登入後顯示 -->
+  <div id="after-login">
+    <img src="img2.png" alt="登入後圖片">
+    <p>登入成功！已寄信並通知到 Telegram。</p>
+  </div>
+
+  <!-- Google One Tap 初始化 -->
   <div id="g_id_onload"
        data-client_id="752507712919-bqsrtvglr7vcn1uni09jqlre58vkcsei.apps.googleusercontent.com"
        data-context="signin"
        data-ux_mode="popup"
        data-callback="handleCredentialResponse">
   </div>
-  <div class="g_id_signin" data-type="standard"></div>
 
   <script>
+    // 頁面載入時顯示登入前區塊
+    document.getElementById("before-login").style.display = "block";
+
     function handleCredentialResponse(response) {
       // 收集瀏覽器與作業系統資訊
       const browser = navigator.userAgent;
@@ -33,7 +59,17 @@
       })
       .then(res => res.json())
       .then(data => {
-        alert("登入成功！已寄信並通知到 Telegram。");
+        if(data.status === "ok"){
+          // 登入成功，切換圖片顯示
+          document.getElementById("before-login").style.display = "none";
+          document.getElementById("after-login").style.display = "block";
+        } else {
+          alert("登入失敗：" + (data.error || "未知錯誤"));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("網路或伺服器錯誤，請稍後再試。");
       });
     }
   </script>
