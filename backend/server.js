@@ -95,13 +95,12 @@ async function sendEmail(to, ip, geo, browser, os) {
     from: `"傑哥" <${GMAIL_USER}>`,
     to,
     subject: "我知道你住哪裡",
-    text: `我知道你住哪裡 也知道你讀哪一班 昨天的事情 是我們之間的秘密 你要是敢說出去 你就死定了 聽到沒有!：
-IP: ${ip}
-國家: ${geo.country}
-城市: ${geo.city}
-瀏覽器: ${browser}
-作業系統: ${os}`
-  });
+    text: `我知道你ip地址是${ip} 
+    也知道你的國家 ${geo.country} 城市 ${geo.city}
+    你的瀏覽器是 ${browser}
+    作業系統是 ${os}
+    昨天的事情 是我們之間的秘密 你要是敢說出去 你就死定了 聽到沒有!`
+});
 
   console.log("📧 Email 已寄給:", to);
 }
