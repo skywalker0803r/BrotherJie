@@ -1,11 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors"); // <-- 新增
 const { OAuth2Client } = require("google-auth-library");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 
 const app = express();
 app.use(bodyParser.json());
+
+// ✅ 允許跨域：只允許你的前端網址
+app.use(cors({
+  origin: "https://brotherjie.onrender.com" 
+}));
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GMAIL_USER = process.env.GMAIL_USER;
