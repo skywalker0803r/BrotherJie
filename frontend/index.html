@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>Google 登入測試</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<h1>Google 登入測試頁面</h1>
+<p>這是一個測試前端頁面，登入後會寄信並發 TG 通知。</p>
+
+
+<div id="g_id_onload"
+data-client_id="YOUR_GOOGLE_CLIENT_ID"
+data-context="signin"
+data-ux_mode="popup"
+data-callback="handleCredentialResponse">
+</div>
+<div class="g_id_signin" data-type="standard"></div>
+
+
+<script>
+function handleCredentialResponse(response) {
+fetch("https://YOUR_BACKEND_URL/google-login", {
+method: "POST",
+headers: {"Content-Type": "application/json"},
+body: JSON.stringify({ credential: response.credential })
+})
+.then(res => res.json())
+.then(data => {
+alert("登入成功！已寄信到：" + data.email);
+});
+}
+</script>
+</body>
+</html>

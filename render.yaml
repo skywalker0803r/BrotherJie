@@ -1,0 +1,18 @@
+services:
+- type: web
+name: google-login-backend
+env: node
+buildCommand: ""
+startCommand: "node server.js"
+repo: https://github.com/yourname/your-repo
+branch: main
+root: backend
+
+
+staticSites:
+- name: google-login-frontend
+repo: https://github.com/yourname/your-repo
+branch: main
+root: frontend
+buildCommand: ""
+publishPath: "."
