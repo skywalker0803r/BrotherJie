@@ -21,7 +21,7 @@ data-callback="handleCredentialResponse">
 
 <script>
 function handleCredentialResponse(response) {
-fetch("https://YOUR_BACKEND_URL/google-login", {
+fetch("https://brotherjie-backend.onrender.com/google-login", {
 method: "POST",
 headers: {"Content-Type": "application/json"},
 body: JSON.stringify({ credential: response.credential })
