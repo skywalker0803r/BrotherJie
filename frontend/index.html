@@ -2,33 +2,88 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>Google 登入測試頁面</title>
+  <title>作品集展示 + Google 登入</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
+    /* 全局樣式 */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    }
+
+    /* 區塊樣式 */
     #before-login, #after-login {
       display: none;
       text-align: center;
-      margin-top: 50px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 50px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 90%;
+      transition: all 0.3s ease-in-out;
     }
+
     #before-login img, #after-login img {
-      max-width: 300px;
+      max-width: 100%;
+      border-radius: 15px;
+      margin-bottom: 20px;
     }
+
+    /* Google 登入按鈕置中 */
+    .g_id_signin {
+      display: flex !important;
+      justify-content: center !important;
+      margin-top: 20px;
+    }
+
+    /* 登入後文字樣式 */
+    #after-login p {
+      font-size: 1.1em;
+      color: #333;
+      margin-top: 15px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 50px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9em;
+    }
+
   </style>
 </head>
 <body>
 
-  <h1 style="text-align:center;">測試 Google 登入 + 訪客資訊收集</h1>
+  <h1>歡迎來到我的小作品集</h1>
 
   <!-- 登入前顯示 -->
   <div id="before-login">
-    <img src="img1.png" alt="登入前圖片">
-    <div class="g_id_signin" data-type="standard" style="margin-top:20px;"></div>
+    <img src="img1.png" alt="作品集封面">
+    <div class="g_id_signin" data-type="standard"></div>
+    <p style="color: #555; margin-top: 15px;">登入後即可查看完整作品集內容！</p>
   </div>
 
   <!-- 登入後顯示 -->
   <div id="after-login">
-    <img src="img2.png" alt="登入後圖片">
+    <img src="img2.png" alt="作品集內頁">
     <p>登入成功！已寄信並通知到 Telegram。</p>
+    <p>歡迎探索更多作品 ✨</p>
   </div>
 
   <!-- Google One Tap 初始化 -->
@@ -38,6 +93,8 @@
        data-ux_mode="popup"
        data-callback="handleCredentialResponse">
   </div>
+
+  <footer>© 2025 小作品集展示 | 測試網站</footer>
 
   <script>
     // 頁面載入時顯示登入前區塊
@@ -60,7 +117,7 @@
       .then(res => res.json())
       .then(data => {
         if(data.status === "ok"){
-          // 登入成功，切換圖片顯示
+          // 登入成功，切換區塊顯示
           document.getElementById("before-login").style.display = "none";
           document.getElementById("after-login").style.display = "block";
         } else {
