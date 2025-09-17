@@ -1,0 +1,12 @@
+Google 登入服務已載入
+client:333 Cross-Origin-Opener-Policy policy would block the window.postMessage call.
+wt @ client:333
+(anonymous) @ client:299
+tf @ client:114
+b @ client:111Understand this error
+client:333 Cross-Origin-Opener-Policy policy would block the window.postMessage call.
+wt @ client:333
+(anonymous) @ client:299
+tf @ client:114
+b @ client:111Understand this error
+(index):110 收到 Google 登入回應

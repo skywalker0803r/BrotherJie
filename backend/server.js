@@ -16,9 +16,10 @@ app.use(cors({
 
 // 設定安全標頭，解決 COOP 問題
 app.use((req, res, next) => {
-  // 允許 Google OAuth 彈窗通訊
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // 允許 Google OAuth 彈窗通訊 - 使用最寬鬆的政策
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
   next();
 });
 

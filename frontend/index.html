@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>作品集展示 + Google 登入</title>
   <!-- 解決 COOP 問題的標頭設定 -->
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="unsafe-none">
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -80,6 +80,18 @@
   <div id="before-login">
     <img src="img1.png" alt="作品集封面">
     <div class="g_id_signin" data-type="standard"></div>
+    <!-- 備用登入按鈕，避免 COOP 問題 -->
+    <div id="manual-signin-btn" style="margin-top: 15px; display: none;">
+      <button onclick="handleManualSignIn()" style="
+        background: #4285f4; 
+        color: white; 
+        border: none; 
+        padding: 10px 20px; 
+        border-radius: 5px; 
+        cursor: pointer;
+        font-size: 16px;
+      ">使用 Google 登入 (備用)</button>
+    </div>
     <p style="color: #555; margin-top: 15px;">登入後即可查看完整作品集內容！</p>
   </div>
 
@@ -96,7 +108,9 @@
        data-context="signin"
        data-ux_mode="popup"
        data-callback="handleCredentialResponse"
-       data-auto_prompt="false">
+       data-auto_prompt="false"
+       data-cancel_on_tap_outside="false"
+       data-use_fedcm_for_prompt="true">
   </div>
 
   <footer>© 2025 小作品集展示 | 測試網站</footer>
@@ -159,11 +173,53 @@
       }
     }
 
+    // 手動 Google 登入（備用方案）
+    function handleManualSignIn() {
+      try {
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+          google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              console.log("One Tap 無法顯示，嘗試彈窗登入");
+              // 如果 One Tap 失敗，嘗試直接彈窗
+              window.open(
+                'https://accounts.google.com/oauth/authorize?' +
+                'client_id=752507712919-bqsrtvglr7vcn1uni09jqlre58vkcsei.apps.googleusercontent.com&' +
+                'response_type=code&' +
+                'scope=openid email profile&' +
+                'redirect_uri=' + encodeURIComponent(window.location.origin),
+                'google-signin',
+                'width=500,height=600'
+              );
+            }
+          });
+        } else {
+          alert("Google 登入服務尚未載入完成，請稍後再試。");
+        }
+      } catch (error) {
+        console.error("手動登入錯誤:", error);
+        alert("登入功能暫時無法使用，請重新整理頁面後再試。");
+      }
+    }
+
     // 監聽 Google 登入載入完成
     window.addEventListener('load', function() {
       // 確保 Google 登入腳本載入完成
       if (typeof google !== 'undefined' && google.accounts) {
         console.log("Google 登入服務已載入");
+        
+        // 檢測是否有 COOP 問題，如果有則顯示備用按鈕
+        setTimeout(() => {
+          const hasCoopIssue = document.querySelector('.g_id_signin').innerHTML === '';
+          if (hasCoopIssue) {
+            document.getElementById('manual-signin-btn').style.display = 'block';
+            console.log("檢測到可能的 COOP 問題，顯示備用登入按鈕");
+          }
+        }, 2000);
+      } else {
+        // Google 腳本載入失敗，顯示備用按鈕
+        setTimeout(() => {
+          document.getElementById('manual-signin-btn').style.display = 'block';
+        }, 3000);
       }
     });
   </script>
