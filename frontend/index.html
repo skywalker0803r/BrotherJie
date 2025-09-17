@@ -2,7 +2,11 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>作品集展示 + Google 登入</title>
+  <!-- 解決 COOP 問題的標頭設定 -->
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     /* 全局樣式 */
@@ -91,7 +95,8 @@
        data-client_id="752507712919-bqsrtvglr7vcn1uni09jqlre58vkcsei.apps.googleusercontent.com"
        data-context="signin"
        data-ux_mode="popup"
-       data-callback="handleCredentialResponse">
+       data-callback="handleCredentialResponse"
+       data-auto_prompt="false">
   </div>
 
   <footer>© 2025 小作品集展示 | 測試網站</footer>
@@ -100,21 +105,33 @@
     // 頁面載入時顯示登入前區塊
     document.getElementById("before-login").style.display = "block";
 
+    // 處理 Google 登入回應
     function handleCredentialResponse(response) {
+      console.log("收到 Google 登入回應");
+      
       // 收集瀏覽器與作業系統資訊
       const browser = navigator.userAgent;
       const os = navigator.platform;
 
       fetch("https://brotherjie-backend.onrender.com/google-login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        credentials: "omit", // 避免 CORS 問題
         body: JSON.stringify({
           credential: response.credential,
           browser,
           os
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
         if(data.status === "ok"){
           // 登入成功，切換區塊顯示
@@ -125,10 +142,30 @@
         }
       })
       .catch(err => {
-        console.error(err);
+        console.error("登入處理錯誤:", err);
         alert("網路或伺服器錯誤，請稍後再試。");
       });
     }
+
+    // 處理 Google 登入錯誤
+    function handleGoogleError(error) {
+      console.error("Google 登入錯誤:", error);
+      if (error.type === 'popup_closed') {
+        alert("登入彈窗被關閉，請重新嘗試登入。");
+      } else if (error.type === 'popup_failed_to_open') {
+        alert("無法開啟登入彈窗，請檢查瀏覽器設定或嘗試重新整理頁面。");
+      } else {
+        alert("登入過程發生錯誤，請重試。");
+      }
+    }
+
+    // 監聽 Google 登入載入完成
+    window.addEventListener('load', function() {
+      // 確保 Google 登入腳本載入完成
+      if (typeof google !== 'undefined' && google.accounts) {
+        console.log("Google 登入服務已載入");
+      }
+    });
   </script>
 </body>
 </html>

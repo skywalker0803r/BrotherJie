@@ -8,10 +8,19 @@ const axios = require("axios");
 const app = express();
 app.use(bodyParser.json());
 
-// ✅ 只允許你的前端網址跨域
+// ✅ CORS 配置 + COOP 標頭設定
 app.use(cors({
-  origin: "https://brotherjie.onrender.com"
+  origin: "https://brotherjie.onrender.com",
+  credentials: true
 }));
+
+// 設定安全標頭，解決 COOP 問題
+app.use((req, res, next) => {
+  // 允許 Google OAuth 彈窗通訊
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  next();
+});
 
 // 環境變數
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
